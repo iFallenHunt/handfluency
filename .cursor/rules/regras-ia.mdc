@@ -7,24 +7,22 @@ globs:
 ### **Visão Geral**  
 O projeto é uma plataforma completa para ensino de Libras, com aulas gravadas e um sistema de agendamento de aulas ao vivo. O objetivo é garantir escalabilidade, segurança e uma experiência fluida para os usuários.  
 
+---
 
-## **Tecnologias Utilizadas**  
+## **Tecnologias U
 
 ### **Backend (Django + DRF)**  
-- **Django (Última versão estável)** – [Documentação](mdc:https:/docs.djangoproject.com/en/stable)  
-- **Django REST Framework (Última versão estável)** – [Documentação](mdc:https:/www.django-rest-framework.org)  
-- **Django-Allauth** (para login social com Google) – [Documentação](mdc:https:/django-allauth.readthedocs.io/en/latest)  
-- **Django-CORS-Headers** (para permitir comunicação entre frontend e backend) – [Documentação](mdc:https:/pypi.org/project/django-cors-headers)  
-- **PyJWT** (para autenticação JWT) – [Documentação](mdc:https:/pyjwt.readthedocs.io/en/stable)  
+- **Django (Última ver* – [Documentação](mdc:https:/docs.djangoproject.com/en/stabango REST Framework (Última versão estável)** – [Documentação](mdc:https:/www.django-reorg)  
+- **Django-Allauth** (para login ogle) – [Documentação](mdc:https:/django-allauth.readthedocs.io/en/latest)  
+- **Django-* (para permitir comunicação entre frontend e backend) – [Dottps://pypi.org/project/django-cors-headers/)  
+- **PyJWT** (para autenticação entação](https://pyjwt.readthedocs.io/en/stSwagger (Documentação automática da API com drf-yasg)** – [Dhttps://drf-yasg.readthedocs.io/en/stable/)  
 
-### **Banco de Dados (Supabase - PostgreSQL)**  
+### **Banco de Dados (StgreSQL)**  
 - **Supabase (Última versão)** – [Documentação](mdc:https:/supabase.com/docs)  
 - **PostgreSQL (Banco de dados relacional escalável)** – [Documentação](mdc:https:/www.postgresql.org/docs)  
 
 ### **Frontend (React + Next.js)**  
-- **React (Última versão estável)** – [Documentação](mdc:https:/react.dev)  
-- **Next.js (Última versão estável)** – [Documentação](mdc:https:/nextjs.org/docs)  
-- **Tailwind CSS (para estilização rápida e moderna)** – [Documentação](mdc:https:/tailwindcss.com/docs)  
+- **React ( estável)** – [Documentação](mdc:https:/react.ext.js (Última versão estável)** – [Documentação](mdc:https:/nextjs.org/docs)nd CSS (para estilização rápida e moderna)** – [Documentação](mdc:https:/tailwindcss.com/docs)  
 - **Zustand (para gerenciamento de estado simples e eficiente)** – [Documentação](mdc:https:/docs.pmnd.rs/zustand)  
 
 ### **Player de Vídeo (Desenvolvimento Próprio)**  
@@ -35,10 +33,10 @@ O projeto é uma plataforma completa para ensino de Libras, com aulas gravadas e
 
 ### **Autenticação e Segurança**  
 - **JWT (JSON Web Tokens para autenticação segura)** – [Documentação](mdc:https:/jwt.io)  
-- **OAuth (Login social via Google)** – [Documentação](mdc:https:/developers.google.com/identity)  
+- **OAuth (Login social via Google)** – [Documentação](mdc:https:/developers.google.com/identity/protocols/oauth2)  
 
 ### **Integração de Pagamentos (Hotmart)**  
-- **Hotmart Webhooks** – [Documentação](mdc:https:/developers.hotmart.com/docs/en/webhooks)  
+- **Hotmart Webhooks** – [Documentação](mdc:https:/developers.hotmart.com/docs/en)  
 
 ---
 
@@ -48,34 +46,27 @@ O projeto é uma plataforma completa para ensino de Libras, com aulas gravadas e
 O projeto seguirá a estrutura modular, organizada para facilitar a escalabilidade e manutenção:  
 
 ```
-plataforma-libras/
-├── backend/ (Django)
-│   ├── core/
-│   │   ├── settings.py
-│   │   ├── urls.py
-│   │   ├── wsgi.py
-│   ├── apps/
-│   │   ├── users/
-│   │   ├── courses/
-│   │   ├── quizzes/
-│   │   ├── live_classes/
-│   ├── requirements.txt
+handfluency/
+├── backend/                 # Backend em Django
 │   ├── manage.py
-│   ├── Dockerfile
-│   ├── .env
+│   ├── requirements.txt
+│   ├── core/                # Configuração principal
+│   ├── users/               # Usuários e autenticação
+│   ├── courses/             # Cursos, módulos e aulas
+│   ├── scheduling/          # Agendamento de aulas ao vivo
+│   ├── quizzes/             # Sistema de quizzes
+│   ├── progress/            # Controle de progresso do aluno
+│   ├── tests/               # Testes automatizados
 │   └── ...
-├── frontend/ (React + Next.js)
-│   ├── components/
-│   ├── pages/
-│   ├── styles/
-│   ├── public/
-│   ├── package.json
-│   ├── .eslintrc.js
-│   ├── .prettierrc
-│   ├── next.config.js
-│   ├── tsconfig.json
-│   ├── Dockerfile
+├── frontend/                # Frontend em React + Next.js
+│   ├── pages/               # Páginas principais
+│   ├── components/          # Componentes reutilizáveis
+│   ├── hooks/               # Hooks personalizados
+│   ├── styles/              # Estilos com Tailwind
+│   ├── services/            # Comunicação com backend
+│   ├── tests/               # Testes do frontend
 │   └── ...
+└── docs/                    # Documentação do projeto
 ```
 
 ---
@@ -122,6 +113,46 @@ docs(readme): adiciona documentação inicial
 
 ---
 
+### **4. Documentação da API**
+A documentação da API será gerada automaticamente usando **Swagger** com a biblioteca `drf-yasg`.  
+
+#### **Configuração no Django**  
+Adicionar `drf-yasg` ao `requirements.txt`:  
+```bash
+pip install drf-yasg
+```
+No arquivo `urls.py`, adicionar:  
+```python
+from django.urls import path, re_path
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Plataforma de Aulas de Libras API",
+        default_version="v1",
+        description="Documentação da API para a plataforma de ensino de Libras",
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("api/", include("core.urls")),
+    re_path(r"^swagger(?P<format>\.json|\.yaml)$", schema_view.without_ui(cache_timeout=0), name="schema-json"),
+    path("swagger/", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
+    path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
+]
+```
+Agora, a documentação poderá ser acessada via:
+- **Swagger UI**: `http://localhost:8000/swagger/`  
+- **Redoc UI**: `http://localhost:8000/redoc/`  
+- **JSON Schema**: `http://localhost:8000/swagger.json`  
+
+---
+
 ## **Fluxo de Desenvolvimento**
 1. **Setup inicial do repositório** – Criar estrutura base do Django e Next.js  
 2. **Implementar autenticação** – Backend (JWT e Google OAuth) e Frontend (integração)  
@@ -131,5 +162,6 @@ docs(readme): adiciona documentação inicial
 6. **Desenvolver interface** – Criar UI moderna e responsiva  
 7. **Testes e validação** – Garantir funcionamento correto  
 8. **Deploy e integração com Hotmart** – Configuração para produção  
+9. **Atualização** - Garanta que todas as tecnologias do projeto estão funcionando na ultima versão atualizada compativel 
 
 ---
