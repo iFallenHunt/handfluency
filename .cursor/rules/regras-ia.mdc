@@ -1,42 +1,8 @@
-# handfluency
-
-tive essa ideia ontem estudando ingles na fluency academy, a ideia seria uma plataforma parecida para aulas de libras, onde os professores sao contratados para dar aula na plataforma como pj, sao pagos por aulas ministradas, materias fornecidos pela plataforma, o professor apenas aplica o material
-
-Podemos estruturar os acessos assim:  
-
-1. **Alunos de aulas gravadas** – Têm acesso apenas à plataforma com módulos e vídeos organizados por nível.  
-2. **Alunos de aulas de conversação** – Conseguem agendar aulas ao vivo com professores, mas sem acesso ao conteúdo gravado.  
-3. **Alunos com acesso completo** – Podem acessar tanto os vídeos gravados quanto agendar aulas ao vivo.  
-
-Isso significa que o sistema de usuários precisa de permissões bem definidas. Podemos criar um painel onde o administrador (ou o próprio aluno) escolhe o plano de acesso, e o sistema libera ou restringe as funcionalidades automaticamente.  
-
-Para o agendamento, o ideal seria algo parecido com um Google Calendar integrado, onde os professores definem horários disponíveis, e os alunos escolhem os horários livres. Assim, conseguimos um fluxo simples e funcional.  
-
-Agora que temos a stack definida, o próximo passo é organizar a arquitetura do projeto. Pensa assim:  
-
-- **Backend (Django)**  
-  - Django REST Framework para a API  
-  - Autenticação JWT + integração com login Google  
-  - Modelos para usuários, cursos, aulas e progresso do aluno  
-  - Webhooks para sincronizar pagamentos do Hotmart  
-
-- **Banco de Dados (Supabase)**  
-  - PostgreSQL gerenciado com suporte a autenticação e realtime  
-  - Armazenamento de dados do usuário, progresso e quizzes  
-
-- **Frontend (React + Next.js)**  
-  - Interface moderna com Tailwind CSS  
-  - Integração com API do Django para buscar cursos e vídeos  
-  - Sistema de autenticação e controle de acesso  
-
-- **Player de Vídeo**  
-  - Desenvolvimento do player próprio com tracking de progresso  
-  - Integração com vídeos do Vimeo sem redirecionamento externo  
-
-
- # regras da ia 
-
-  ## **Projeto: Plataforma de Aulas de Libras**  
+---
+description: Boas praticas de escrita
+globs: 
+---
+## **Projeto: Plataforma de Aulas de Libras**  
 
 ### **Visão Geral**  
 O projeto é uma plataforma completa para ensino de Libras, com aulas gravadas e um sistema de agendamento de aulas ao vivo. O objetivo é garantir escalabilidade, segurança e uma experiência fluida para os usuários.  
@@ -45,21 +11,21 @@ O projeto é uma plataforma completa para ensino de Libras, com aulas gravadas e
 ## **Tecnologias Utilizadas**  
 
 ### **Backend (Django + DRF)**  
-- **Django (Última versão estável)** – [Documentação](https://docs.djangoproject.com/en/stable/)  
-- **Django REST Framework (Última versão estável)** – [Documentação](https://www.django-rest-framework.org/)  
-- **Django-Allauth** (para login social com Google) – [Documentação](https://django-allauth.readthedocs.io/en/latest/)  
-- **Django-CORS-Headers** (para permitir comunicação entre frontend e backend) – [Documentação](https://pypi.org/project/django-cors-headers/)  
-- **PyJWT** (para autenticação JWT) – [Documentação](https://pyjwt.readthedocs.io/en/stable/)  
+- **Django (Última versão estável)** – [Documentação](mdc:https:/docs.djangoproject.com/en/stable)  
+- **Django REST Framework (Última versão estável)** – [Documentação](mdc:https:/www.django-rest-framework.org)  
+- **Django-Allauth** (para login social com Google) – [Documentação](mdc:https:/django-allauth.readthedocs.io/en/latest)  
+- **Django-CORS-Headers** (para permitir comunicação entre frontend e backend) – [Documentação](mdc:https:/pypi.org/project/django-cors-headers)  
+- **PyJWT** (para autenticação JWT) – [Documentação](mdc:https:/pyjwt.readthedocs.io/en/stable)  
 
 ### **Banco de Dados (Supabase - PostgreSQL)**  
-- **Supabase (Última versão)** – [Documentação](https://supabase.com/docs/)  
-- **PostgreSQL (Banco de dados relacional escalável)** – [Documentação](https://www.postgresql.org/docs/)  
+- **Supabase (Última versão)** – [Documentação](mdc:https:/supabase.com/docs)  
+- **PostgreSQL (Banco de dados relacional escalável)** – [Documentação](mdc:https:/www.postgresql.org/docs)  
 
 ### **Frontend (React + Next.js)**  
-- **React (Última versão estável)** – [Documentação](https://react.dev/)  
-- **Next.js (Última versão estável)** – [Documentação](https://nextjs.org/docs)  
-- **Tailwind CSS (para estilização rápida e moderna)** – [Documentação](https://tailwindcss.com/docs)  
-- **Zustand (para gerenciamento de estado simples e eficiente)** – [Documentação](https://docs.pmnd.rs/zustand)  
+- **React (Última versão estável)** – [Documentação](mdc:https:/react.dev)  
+- **Next.js (Última versão estável)** – [Documentação](mdc:https:/nextjs.org/docs)  
+- **Tailwind CSS (para estilização rápida e moderna)** – [Documentação](mdc:https:/tailwindcss.com/docs)  
+- **Zustand (para gerenciamento de estado simples e eficiente)** – [Documentação](mdc:https:/docs.pmnd.rs/zustand)  
 
 ### **Player de Vídeo (Desenvolvimento Próprio)**  
 - **Custom Video Player**  
@@ -68,11 +34,11 @@ O projeto é uma plataforma completa para ensino de Libras, com aulas gravadas e
   - Tracking de progresso  
 
 ### **Autenticação e Segurança**  
-- **JWT (JSON Web Tokens para autenticação segura)** – [Documentação](https://jwt.io/)  
-- **OAuth (Login social via Google)** – [Documentação](https://developers.google.com/identity)  
+- **JWT (JSON Web Tokens para autenticação segura)** – [Documentação](mdc:https:/jwt.io)  
+- **OAuth (Login social via Google)** – [Documentação](mdc:https:/developers.google.com/identity)  
 
 ### **Integração de Pagamentos (Hotmart)**  
-- **Hotmart Webhooks** – [Documentação](https://developers.hotmart.com/docs/en/webhooks)  
+- **Hotmart Webhooks** – [Documentação](mdc:https:/developers.hotmart.com/docs/en/webhooks)  
 
 ---
 
