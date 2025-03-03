@@ -11,19 +11,24 @@ O projeto é uma plataforma completa para ensino de Libras, com aulas gravadas e
 
 ## **Tecnologias U
 
-### **Backend (Django + DRF)**  
-- **Django (Última ver* – [Documentação](mdc:https:/docs.djangoproject.com/en/stabango REST Framework (Última versão estável)** – [Documentação](mdc:https:/www.django-reorg)  
-- **Django-Allauth** (para login ogle) – [Documentação](mdc:https:/django-allauth.readthedocs.io/en/latest)  
-- **Django-* (para permitir comunicação entre frontend e backend) – [Dottps://pypi.org/project/django-cors-headers/)  
-- **PyJWT** (para autenticação entação](https://pyjwt.readthedocs.io/en/stSwagger (Documentação automática da API com drf-yasg)** – [Dhttps://drf-yasg.readthedocs.io/en/stable/)  
+## **Tecnologias Utilizadas**  
 
-### **Banco de Dados (StgreSQL)**  
+### **Backend (Django + DRF)**  
+- **Django (Última versão estável)** – [Documentação](mdc:https:/docs.djangoproject.com/en/stable)  
+- **Django REST Framework (Última versão estável)** – [Documentação](mdc:https:/www.django-rest-framework.org)  
+- **Django-Allauth** (para login social com Google) – [Documentação](mdc:https:/django-allauth.readthedocs.io/en/latest)  
+- **Django-CORS-Headers** (para permitir comunicação entre frontend e backend) – [Documentação](mdc:https:/pypi.org/project/django-cors-headers)  
+- **PyJWT** (para autenticação JWT) – [Documentação](mdc:https:/pyjwt.readthedocs.io/en/stable)
+
+### **Banco de Dados (Supabase - PostgreSQL)**  
 - **Supabase (Última versão)** – [Documentação](mdc:https:/supabase.com/docs)  
 - **PostgreSQL (Banco de dados relacional escalável)** – [Documentação](mdc:https:/www.postgresql.org/docs)  
 
 ### **Frontend (React + Next.js)**  
-- **React ( estável)** – [Documentação](mdc:https:/react.ext.js (Última versão estável)** – [Documentação](mdc:https:/nextjs.org/docs)nd CSS (para estilização rápida e moderna)** – [Documentação](mdc:https:/tailwindcss.com/docs)  
-- **Zustand (para gerenciamento de estado simples e eficiente)** – [Documentação](mdc:https:/docs.pmnd.rs/zustand)  
+- **React (Última versão estável)** – [Documentação](mdc:https:/react.dev)  
+- **Next.js (Última versão estável)** – [Documentação](mdc:https:/nextjs.org/docs)  
+- **Tailwind CSS (para estilização rápida e moderna)** – [Documentação](mdc:https:/tailwindcss.com/docs)  
+- **Zustand (para gerenciamento de estado simples e eficiente)** – [Documentação](mdc:https:/docs.pmnd.rs/zustand) 
 
 ### **Player de Vídeo (Desenvolvimento Próprio)**  
 - **Custom Video Player**  
@@ -33,10 +38,10 @@ O projeto é uma plataforma completa para ensino de Libras, com aulas gravadas e
 
 ### **Autenticação e Segurança**  
 - **JWT (JSON Web Tokens para autenticação segura)** – [Documentação](mdc:https:/jwt.io)  
-- **OAuth (Login social via Google)** – [Documentação](mdc:https:/developers.google.com/identity/protocols/oauth2)  
+- **OAuth (Login social via Google)** – [Documentação](mdc:https:/developers.google.com/identity)  
 
 ### **Integração de Pagamentos (Hotmart)**  
-- **Hotmart Webhooks** – [Documentação](mdc:https:/developers.hotmart.com/docs/en)  
+- **Hotmart Webhooks** – [Documentação](mdc:https:/developers.hotmart.com/docs/en/webhooks)  
 
 ---
 
