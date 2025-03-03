@@ -43,10 +43,10 @@ Este documento mantém o registro do progresso de desenvolvimento e os próximos
 ## Backend
 
 ### Configuração do Django REST Framework
-- [ ] Configurar DRF no settings.py
-- [ ] Configurar autenticação JWT
-- [ ] Configurar CORS
-- [ ] Configurar Swagger/OpenAPI
+- [x] Configurar DRF no settings.py
+- [x] Configurar autenticação JWT
+- [x] Configurar CORS
+- [x] Configurar Swagger/OpenAPI
 
 ### Modelos de Dados
 - [ ] Users
@@ -201,6 +201,10 @@ Este documento mantém o registro do progresso de desenvolvimento e os próximos
    - `feat: initialize django project with core apps structure`
    - `build: add initial python dependencies`
    - `chore: add environment variables template`
+   - `feat: configure django rest framework and dependencies in settings.py`
+   - `feat: add jwt authentication configuration`
+   - `feat: enhance cors configuration and security headers`
+   - `feat: setup swagger/openapi documentation`
 
 3. Frontend:
    - `feat: initialize next.js project with typescript and tailwind`
