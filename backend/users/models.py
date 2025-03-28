@@ -1,9 +1,17 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
+import uuid
 
 
-class User(AbstractUser):
+class BaseModel(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    class Meta:
+        abstract = True
+
+
+class User(BaseModel, AbstractUser):
     """
     Modelo de usuário customizado para a plataforma de ensino de Libras.
     Estende o modelo AbstractUser do Django, adicionando campos específicos.
@@ -52,8 +60,11 @@ class User(AbstractUser):
     def __str__(self) -> str:
         return str(self.username)
 
+    class Meta:
+        db_table = "users"
 
-class UserProfile(models.Model):
+
+class UserProfile(BaseModel):
     """
     Perfil adicional do usuário, armazenando informações complementares.
     """
@@ -78,8 +89,11 @@ class UserProfile(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        return f"Perfil de {self.user.username}"
+        if hasattr(self.user, "username") and self.user.username:
+            return f"Perfil de {self.user.username}"
+        return f"Perfil de usuário {self.id}"
 
     class Meta:
         verbose_name = _("Perfil de Usuário")
         verbose_name_plural = _("Perfis de Usuários")
+        db_table = "user_profiles"

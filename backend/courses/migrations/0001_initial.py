@@ -22,10 +22,15 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("title", models.CharField(max_length=200, verbose_name="título")),
+                (
+                    "title",
+                    models.CharField(max_length=200, verbose_name="título")
+                ),
                 (
                     "slug",
-                    models.SlugField(max_length=255, unique=True, verbose_name="slug"),
+                    models.SlugField(
+                        max_length=255, unique=True, verbose_name="slug"
+                    ),
                 ),
                 ("description", models.TextField(verbose_name="descrição")),
                 (
@@ -52,16 +57,26 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "preview_video",
-                    models.URLField(blank=True, verbose_name="vídeo de prévia"),
+                    models.URLField(
+                        blank=True,
+                        verbose_name="vídeo de prévia"
+                    ),
                 ),
-                ("is_active", models.BooleanField(default=True, verbose_name="ativo")),
+                (
+                    "is_active",
+                    models.BooleanField(default=True, verbose_name="ativo")
+                ),
                 (
                     "created_at",
-                    models.DateTimeField(auto_now_add=True, verbose_name="criado em"),
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="criado em"
+                    ),
                 ),
                 (
                     "updated_at",
-                    models.DateTimeField(auto_now=True, verbose_name="atualizado em"),
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="atualizado em"
+                    ),
                 ),
                 (
                     "total_students",
@@ -100,18 +115,27 @@ class Migration(migrations.Migration):
                 (
                     "rating",
                     models.PositiveSmallIntegerField(
-                        choices=[(1, "1"), (2, "2"), (3, "3"), (4, "4"), (5, "5")],
+                        choices=[
+                            (1, "1"), (2, "2"), (3, "3"), (4, "4"), (5, "5")
+                        ],
                         verbose_name="avaliação",
                     ),
                 ),
-                ("comment", models.TextField(blank=True, verbose_name="comentário")),
+                (
+                    "comment",
+                    models.TextField(blank=True, verbose_name="comentário")
+                ),
                 (
                     "created_at",
-                    models.DateTimeField(auto_now_add=True, verbose_name="criado em"),
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="criado em"
+                    ),
                 ),
                 (
                     "updated_at",
-                    models.DateTimeField(auto_now=True, verbose_name="atualizado em"),
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="atualizado em"
+                    ),
                 ),
             ],
             options={
@@ -137,10 +161,16 @@ class Migration(migrations.Migration):
                         auto_now_add=True, verbose_name="matriculado em"
                     ),
                 ),
-                ("is_active", models.BooleanField(default=True, verbose_name="ativo")),
+                (
+                    "is_active",
+                    models.BooleanField(default=True, verbose_name="ativo")
+                ),
                 (
                     "completed",
-                    models.BooleanField(default=False, verbose_name="completo"),
+                    models.BooleanField(
+                        default=False,
+                        verbose_name="completo"
+                    ),
                 ),
                 (
                     "last_accessed",
@@ -172,7 +202,10 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("title", models.CharField(max_length=200, verbose_name="título")),
+                (
+                    "title",
+                    models.CharField(max_length=200, verbose_name="título")
+                ),
                 ("description", models.TextField(verbose_name="descrição")),
                 ("video_url", models.URLField(verbose_name="URL do vídeo")),
                 (
@@ -191,20 +224,30 @@ class Migration(migrations.Migration):
                         verbose_name="é gratuita",
                     ),
                 ),
-                ("is_active", models.BooleanField(default=True, verbose_name="ativa")),
+                (
+                    "is_active",
+                    models.BooleanField(default=True, verbose_name="ativa")
+                ),
                 (
                     "created_at",
-                    models.DateTimeField(auto_now_add=True, verbose_name="criada em"),
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="criada em"
+                    ),
                 ),
                 (
                     "updated_at",
-                    models.DateTimeField(auto_now=True, verbose_name="atualizada em"),
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="atualizada em"
+                    ),
                 ),
                 (
                     "supplementary_material",
                     models.TextField(
                         blank=True,
-                        help_text="Material adicional para a aula (links, texto, etc)",
+                        help_text=(
+                            "Material adicional para a aula "
+                            "(links, texto, etc)"
+                        ),
                         verbose_name="material complementar",
                     ),
                 ),
@@ -227,17 +270,27 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("title", models.CharField(max_length=200, verbose_name="título")),
+                (
+                    "title",
+                    models.CharField(max_length=200, verbose_name="título")
+                ),
                 ("description", models.TextField(verbose_name="descrição")),
                 ("order", models.PositiveIntegerField(verbose_name="ordem")),
-                ("is_active", models.BooleanField(default=True, verbose_name="ativo")),
+                (
+                    "is_active",
+                    models.BooleanField(default=True, verbose_name="ativo")
+                ),
                 (
                     "created_at",
-                    models.DateTimeField(auto_now_add=True, verbose_name="criado em"),
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="criado em"
+                    ),
                 ),
                 (
                     "updated_at",
-                    models.DateTimeField(auto_now=True, verbose_name="atualizado em"),
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="atualizado em"
+                    ),
                 ),
             ],
             options={

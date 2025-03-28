@@ -26,7 +26,7 @@ SECRET_KEY = config(
     "SECRET_KEY",
     default=(
         "django-insecure-bko^@cf)8^g_$s5x2xee-a3^2l)u3#vof@iwij@)jtf%gkfu%2"
-    ),
+        ),
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -134,12 +134,12 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": (
             "django.contrib.auth.password_validation.MinimumLengthValidator"
-        ),
+            ),
     },
     {
         "NAME": (
             "django.contrib.auth.password_validation.CommonPasswordValidator"
-        ),
+            ),
     },
     {
         "NAME": (
@@ -184,7 +184,7 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
     "DEFAULT_PAGINATION_CLASS": (
         "rest_framework.pagination.PageNumberPagination"
-    ),
+        ),
     "PAGE_SIZE": 10,
 }
 
@@ -268,13 +268,6 @@ AUTH_USER_MODEL = "users.User"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-# Configurações para migrações personalizadas - comentado para resolver problemas
-# MIGRATION_MODULES = {
-#     "auth": "migrations.auth",
-#     "contenttypes": "migrations.contenttypes",
-#     "sessions": "migrations.sessions",
-#     # outros apps que precisam de controle especial
-# }
 
 # Configurações do Supabase
 SUPABASE_URL = config(
