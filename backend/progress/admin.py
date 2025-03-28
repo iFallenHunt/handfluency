@@ -1,7 +1,12 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
-from .models import LessonProgress, CourseProgress, Achievement, StudentAchievement
+from .models import (
+    LessonProgress,
+    CourseProgress,
+    Achievement,
+    StudentAchievement,
+)
 
 
 @admin.register(LessonProgress)
@@ -68,7 +73,9 @@ class CourseProgressAdmin(admin.ModelAdmin):
             progress.update_progress()
         self.message_user(
             request,
-            _('Progresso atualizado para {0} registros.').format(queryset.count())
+            _(
+                'Progresso atualizado para {0} registros.'
+                ).format(queryset.count())
         )
     update_progress.short_description = _('Atualizar progresso selecionado')
 
