@@ -206,6 +206,7 @@ Este documento mantém o registro do progresso de desenvolvimento e os próximos
    - `feat: enhance cors configuration and security headers`
    - `feat: setup swagger/openapi documentation`
    - `feat: implement data models for all apps`
+   - `fix: resolve database migration issues`
 
 3. Frontend:
    - `feat: initialize next.js project with typescript and tailwind`
@@ -227,11 +228,3 @@ Este documento mantém o registro do progresso de desenvolvimento e os próximos
 - Node.js LTS
 - PostgreSQL
 - VS Code com extensões recomendadas 
-
-### Problemas Conhecidos
-1. Problema de migração do banco de dados
-   - Erro: "Migration admin.0001_initial is applied before its dependency users.0001_initial on database 'default'"
-   - Causa: O banco de dados já possui migração admin aplicada, mas ainda não tem a migração users
-   - Possíveis soluções:
-     - Fazer backup do banco e resetar, executando migrate novamente
-     - Marcar manualmente as migrações como aplicadas para resolver a dependência 
