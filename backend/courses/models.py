@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
-from typing import Any
+from typing import Optional, cast
 
 
 class Course(models.Model):
@@ -39,7 +39,9 @@ class Course(models.Model):
 
     # Estatísticas
     total_students = models.PositiveIntegerField(
-        _("total de alunos"), default=0)
+        _("total de alunos"), 
+        default=0
+    )
     average_rating = models.DecimalField(
         _("avaliação média"), max_digits=3, decimal_places=2, default=0.0
     )
@@ -73,6 +75,9 @@ class Module(models.Model):
     created_at = models.DateTimeField(_("criado em"), auto_now_add=True)
     updated_at = models.DateTimeField(_("atualizado em"), auto_now=True)
 
+    # Cache para objetos relacionados
+    _course_cache: Optional[Course] = None
+
     class Meta:
         verbose_name = _("Módulo")
         verbose_name_plural = _("Módulos")
@@ -80,15 +85,16 @@ class Module(models.Model):
         unique_together = [["course", "order"]]
 
     def __str__(self) -> str:
+        """Representação em string formatada como 'Curso - Módulo'."""
         course_title = ""
-        if hasattr(self, "_course_cache"):
-            course_title = self._course_cache.title
-        else:
-            try:
-                course_title = self.course.title
-                self._course_cache = self.course
-            except Exception:
-                course_title = f"Curso {self.course_id}"
+        try:
+            # Acessar o objeto course diretamente
+            course_obj = cast(Course, self.course)
+            course_title = course_obj.title
+            # Armazenar em cache para uso futuro
+            self._course_cache = course_obj
+        except Exception:
+            course_title = f"Curso {self.course_id}"
         return f"{course_title} - {self.title}"
 
 
@@ -128,6 +134,9 @@ class Lesson(models.Model):
         help_text=_("Material adicional para a aula (links, texto, etc)"),
     )
 
+    # Cache para objetos relacionados
+    _module_cache: Optional[Module] = None
+
     class Meta:
         verbose_name = _("Aula")
         verbose_name_plural = _("Aulas")
@@ -135,45 +144,35 @@ class Lesson(models.Model):
         unique_together = [["module", "order"]]
 
     def __str__(self) -> str:
+        """Representação em string formatada como 'Curso - Módulo - Aula'."""
         module_title = ""
         course_title = ""
         try:
-            if hasattr(self, "_module_cache"):
-                module = self._module_cache
-            else:
-                module = self.module
-                self._module_cache = module
+            # Acessar o objeto module diretamente
+            module_obj = cast(Module, self.module)
+            module_title = module_obj.title
             
-            module_title = module.title
+            # Tentar acessar o curso através do módulo
+            course_obj = cast(Course, module_obj.course)
+            course_title = course_obj.title
             
-            if hasattr(module, "_course_cache"):
-                course = module._course_cache
-            else:
-                course = module.course
-                module._course_cache = course
-            
-            course_title = course.title
+            # Armazenar em cache para uso futuro
+            self._module_cache = module_obj
+            module_obj._course_cache = course_obj
         except Exception:
             module_title = f"Módulo {self.module_id}"
             course_title = "Curso"
-        
+
         return f"{course_title} - {module_title} - {self.title}"
 
     @property
-    def course(self) -> Any:
+    def course(self) -> Optional[Course]:
+        """Retorna o curso a qual esta aula pertence."""
         try:
-            if hasattr(self, "_module_cache"):
-                module = self._module_cache
-            else:
-                module = self.module
-                self._module_cache = module
-            
-            if hasattr(module, "_course_cache"):
-                return module._course_cache
-            else:
-                course = module.course
-                module._course_cache = course
-                return course
+            # Acessar o objeto module diretamente
+            module_obj = cast(Module, self.module)
+            # Acessar o curso através do módulo
+            return cast(Course, module_obj.course)
         except Exception:
             return None
 
@@ -201,10 +200,13 @@ class Enrollment(models.Model):
 
     # Rastreamento de progresso
     last_accessed = models.DateTimeField(
-        _("último acesso"), null=True, blank=True
+        _("último acesso"), 
+        null=True, 
+        blank=True
     )
     progress_percentage = models.PositiveIntegerField(
-        _("porcentagem de progresso"), default=0
+        _("porcentagem de progresso"), 
+        default=0
     )
 
     class Meta:
@@ -213,18 +215,26 @@ class Enrollment(models.Model):
         unique_together = [["student", "course"]]
 
     def __str__(self) -> str:
+        """Representação em string formatada como 'Aluno - Curso'."""
         student_username = ""
         course_title = ""
         try:
-            student_username = self.student.username
+            # Tentar acessar o username do aluno
+            user = self.student
+            if hasattr(user, 'username'):
+                student_username = user.username
+            else:
+                student_username = str(user)
         except Exception:
             student_username = f"Aluno {self.student_id}"
-        
+
         try:
-            course_title = self.course.title
+            # Tentar acessar o título do curso
+            course_obj = cast(Course, self.course)
+            course_title = course_obj.title
         except Exception:
             course_title = f"Curso {self.course_id}"
-            
+
         return f"{student_username} - {course_title}"
 
 
@@ -258,16 +268,25 @@ class CourseRating(models.Model):
         unique_together = [["student", "course"]]
 
     def __str__(self) -> str:
+        """Representação em string formatada como 'Curso - Avaliação - Aluno'."""
         student_username = ""
         course_title = ""
         try:
-            student_username = self.student.username
+            # Tentar acessar o username do aluno
+            user = self.student
+            if hasattr(user, 'username'):
+                student_username = user.username
+            else:
+                student_username = str(user)
         except Exception:
             student_username = f"Aluno {self.student_id}"
-        
+
         try:
-            course_title = self.course.title
+            # Tentar acessar o título do curso
+            course_obj = cast(Course, self.course)
+            course_title = course_obj.title
         except Exception:
             course_title = f"Curso {self.course_id}"
-            
-        return f"{course_title} - {self.rating}/5 - {student_username}"
+
+        rating_text = f"{course_title} - {self.rating}/5"
+        return f"{rating_text} - {student_username}"

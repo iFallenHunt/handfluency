@@ -1,8 +1,9 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
+from typing import cast
 
-from courses.models import Course, Lesson, Module
+from courses.models import Course, Lesson
 
 
 class LessonProgress(models.Model):
@@ -32,31 +33,44 @@ class LessonProgress(models.Model):
     ]
 
     status = models.CharField(
-        _("status"), max_length=20, choices=STATUS_CHOICES, default="not_started"
+        _("status"), 
+        max_length=20, 
+        choices=STATUS_CHOICES,
+        default="not_started"
     )
 
     # Progresso do vídeo em segundos
     video_progress = models.PositiveIntegerField(
-        _("progresso do vídeo (segundos)"), default=0
+        _("progresso do vídeo (segundos)"), 
+        default=0
     )
 
     # Percentual de conclusão (0-100)
     progress_percentage = models.PositiveSmallIntegerField(
-        _("percentual de progresso"), default=0
+        _("percentual de progresso"), 
+        default=0
     )
 
     # Datas de acesso
     last_accessed = models.DateTimeField(_("último acesso"), auto_now=True)
 
-    completed_at = models.DateTimeField(_("concluída em"), null=True, blank=True)
+    completed_at = models.DateTimeField(
+        _("concluída em"), 
+        null=True, 
+        blank=True
+    )
 
     # Tempo total assistido em segundos
     total_watched_time = models.PositiveIntegerField(
-        _("tempo total assistido (segundos)"), default=0
+        _("tempo total assistido (segundos)"), 
+        default=0
     )
 
     # Número de vezes que a aula foi assistida
-    view_count = models.PositiveIntegerField(_("contagem de visualizações"), default=0)
+    view_count = models.PositiveIntegerField(
+        _("contagem de visualizações"), 
+        default=0
+    )
 
     # Metadados
     created_at = models.DateTimeField(_("criado em"), auto_now_add=True)
@@ -68,15 +82,51 @@ class LessonProgress(models.Model):
         ordering = ["lesson__module__order", "lesson__order"]
 
     def __str__(self) -> str:
-        return f"{self.student.get_full_name()} - {self.lesson.title} - {self.status}"
+        """Representação em string do progresso da aula."""
+        student_name = ""
+        lesson_title = ""
+        
+        try:
+            # Tentar acessar o nome do aluno
+            user = self.student
+            if hasattr(user, 'get_full_name'):
+                student_name = user.get_full_name()
+            else:
+                student_name = str(user)
+        except Exception:
+            student_name = f"Aluno {self.student_id}"
+            
+        try:
+            # Tentar acessar o título da aula
+            lesson_obj = cast(Lesson, self.lesson)
+            lesson_title = lesson_obj.title
+        except Exception:
+            lesson_title = f"Aula {self.lesson_id}"
+            
+        status_str = dict(self.STATUS_CHOICES).get(
+            self.status, self.status
+        )
+        
+        return f"{student_name} - {lesson_title} - {status_str}"
 
     @property
     def module(self):
-        return self.lesson.module
+        """Retorna o módulo a qual esta aula pertence."""
+        try:
+            lesson_obj = cast(Lesson, self.lesson)
+            return lesson_obj.module
+        except Exception:
+            return None
 
     @property
     def course(self):
-        return self.lesson.module.course
+        """Retorna o curso a qual esta aula pertence."""
+        try:
+            lesson_obj = cast(Lesson, self.lesson)
+            module = lesson_obj.module
+            return module.course
+        except Exception:
+            return None
 
 
 class CourseProgress(models.Model):
@@ -107,27 +157,44 @@ class CourseProgress(models.Model):
     ]
 
     status = models.CharField(
-        _("status"), max_length=20, choices=STATUS_CHOICES, default="not_started"
+        _("status"), 
+        max_length=20, 
+        choices=STATUS_CHOICES,
+        default="not_started"
     )
 
     # Percentual de conclusão (0-100)
     progress_percentage = models.PositiveSmallIntegerField(
-        _("percentual de progresso"), default=0
+        _("percentual de progresso"), 
+        default=0
     )
 
     # Datas de acesso
     last_accessed = models.DateTimeField(_("último acesso"), auto_now=True)
 
-    completed_at = models.DateTimeField(_("concluído em"), null=True, blank=True)
+    completed_at = models.DateTimeField(
+        _("concluído em"), 
+        null=True, 
+        blank=True
+    )
 
     # Métricas de progresso
-    completed_lessons = models.PositiveIntegerField(_("aulas concluídas"), default=0)
+    completed_lessons = models.PositiveIntegerField(
+        _("aulas concluídas"), 
+        default=0
+    )
 
-    total_lessons = models.PositiveIntegerField(_("total de aulas"), default=0)
+    total_lessons = models.PositiveIntegerField(
+        _("total de aulas"), 
+        default=0
+    )
 
     # Pontuação em quizzes
     quiz_average_score = models.DecimalField(
-        _("pontuação média em quizzes"), max_digits=5, decimal_places=2, default=0.0
+        _("pontuação média em quizzes"), 
+        max_digits=5, 
+        decimal_places=2, 
+        default=0.0
     )
 
     # Metadados
@@ -140,32 +207,55 @@ class CourseProgress(models.Model):
         ordering = ["-last_accessed"]
 
     def __str__(self) -> str:
-        return f"{self.student.get_full_name()} - {self.course.title} - {self.progress_percentage}%"
+        """Representação em string do progresso do curso."""
+        student_name = ""
+        course_title = ""
+        
+        try:
+            # Tentar acessar o nome do aluno
+            user = self.student
+            if hasattr(user, 'get_full_name'):
+                student_name = user.get_full_name()
+            else:
+                student_name = str(user)
+        except Exception:
+            student_name = f"Aluno {self.student_id}"
+            
+        try:
+            # Tentar acessar o título do curso
+            course_obj = cast(Course, self.course)
+            course_title = course_obj.title
+        except Exception:
+            course_title = f"Curso {self.course_id}"
+            
+        progress = f"{course_title} - {self.progress_percentage}%"
+        return f"{student_name} - {progress}"
 
     def update_progress(self):
         """
         Atualiza o progresso geral do curso com base no progresso das aulas.
         """
-        from django.db.models import Count, Sum, F, ExpressionWrapper, FloatField
-        from django.db.models.functions import Cast
-
         # Recupera todas as aulas do curso
-        total_lessons = Lesson.objects.filter(module__course=self.course).count()
+        lessons = Lesson.objects.filter(
+            module__course=self.course
+        ).count()
 
         # Recupera as aulas concluídas pelo aluno
-        completed_lessons = LessonProgress.objects.filter(
-            student=self.student, lesson__module__course=self.course, status="completed"
+        completed = LessonProgress.objects.filter(
+            student=self.student, 
+            lesson__module__course=self.course, 
+            status="completed"
         ).count()
 
         # Calcula o percentual de progresso
-        if total_lessons > 0:
-            progress = (completed_lessons / total_lessons) * 100
+        if lessons > 0:
+            progress = (completed / lessons) * 100
         else:
             progress = 0
 
         # Atualiza os campos
-        self.total_lessons = total_lessons
-        self.completed_lessons = completed_lessons
+        self.total_lessons = lessons
+        self.completed_lessons = completed
         self.progress_percentage = int(progress)
 
         # Atualiza o status
@@ -231,7 +321,7 @@ class Achievement(models.Model):
         ordering = ["achievement_type", "points"]
 
     def __str__(self) -> str:
-        return self.title
+        return str(self.title)
 
 
 class StudentAchievement(models.Model):
@@ -276,4 +366,25 @@ class StudentAchievement(models.Model):
         ordering = ["-earned_at"]
 
     def __str__(self) -> str:
-        return f"{self.student.get_full_name()} - {self.achievement.title}"
+        """Representação em string da conquista do aluno."""
+        student_name = ""
+        achievement_title = ""
+        
+        try:
+            # Tentar acessar o nome do aluno
+            user = self.student
+            if hasattr(user, 'get_full_name'):
+                student_name = user.get_full_name()
+            else:
+                student_name = str(user)
+        except Exception:
+            student_name = f"Aluno {self.student_id}"
+            
+        try:
+            # Tentar acessar o título da conquista
+            achievement_obj = cast(Achievement, self.achievement)
+            achievement_title = achievement_obj.title
+        except Exception:
+            achievement_title = f"Conquista {self.achievement_id}"
+            
+        return f"{student_name} - {achievement_title}"
