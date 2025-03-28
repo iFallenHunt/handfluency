@@ -23,13 +23,26 @@ class Migration(migrations.Migration):
                         serialize=False,
                     ),
                 ),
-                ("title", models.CharField(max_length=100, verbose_name="título")),
-                ("message", models.TextField(verbose_name="mensagem")),
+                (
+                    "title",
+                    models.CharField(
+                        max_length=100, verbose_name="título"
+                    ),
+                ),
+                (
+                    "message",
+                    models.TextField(verbose_name="mensagem"),
+                ),
                 (
                     "created_at",
-                    models.DateTimeField(auto_now_add=True, verbose_name="criado em"),
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="criado em"
+                    ),
                 ),
-                ("is_read", models.BooleanField(default=False, verbose_name="lido")),
+                (
+                    "is_read",
+                    models.BooleanField(default=False, verbose_name="lido"),
+                ),
                 (
                     "notification_type",
                     models.CharField(
@@ -100,7 +113,11 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "zoom_link",
-                    models.URLField(blank=True, null=True, verbose_name="link do Zoom"),
+                    models.URLField(
+                        blank=True,
+                        null=True,
+                        verbose_name="link do Zoom",
+                    ),
                 ),
                 (
                     "notes",
@@ -108,11 +125,15 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "created_at",
-                    models.DateTimeField(auto_now_add=True, verbose_name="criado em"),
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="criado em"
+                        ),
                 ),
                 (
                     "updated_at",
-                    models.DateTimeField(auto_now=True, verbose_name="atualizado em"),
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="atualizado em"
+                        ),
                 ),
                 (
                     "rating",
@@ -168,15 +189,21 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "is_available",
-                    models.BooleanField(default=True, verbose_name="disponível"),
+                    models.BooleanField(
+                        default=True, verbose_name="disponível"
+                        ),
                 ),
                 (
                     "created_at",
-                    models.DateTimeField(auto_now_add=True, verbose_name="criado em"),
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="criado em"
+                        ),
                 ),
                 (
                     "updated_at",
-                    models.DateTimeField(auto_now=True, verbose_name="atualizado em"),
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="atualizado em"
+                        ),
                 ),
             ],
             options={

@@ -23,7 +23,9 @@ class Migration(migrations.Migration):
                         serialize=False,
                     ),
                 ),
-                ("name", models.CharField(max_length=100, verbose_name="nome")),
+                ("name", models.CharField(
+                    max_length=100, verbose_name="nome"
+                    )),
                 ("description", models.TextField(verbose_name="descrição")),
                 (
                     "badge_image",
@@ -162,7 +164,12 @@ class Migration(migrations.Migration):
                         serialize=False,
                     ),
                 ),
-                ("is_completed", models.BooleanField(default=False, verbose_name="completa")),
+                (
+                    "is_completed",
+                    models.BooleanField(
+                        default=False, verbose_name="completa"
+                    ),
+                ),
                 (
                     "progress_percentage",
                     models.PositiveSmallIntegerField(
@@ -172,9 +179,9 @@ class Migration(migrations.Migration):
                 (
                     "last_position",
                     models.PositiveIntegerField(
-                        default=0, 
+                        default=0,
                         help_text="Posição em segundos no vídeo",
-                        verbose_name="última posição"
+                        verbose_name="última posição",
                     ),
                 ),
                 (
@@ -226,7 +233,12 @@ class Migration(migrations.Migration):
                         default=0, verbose_name="pontos ganhos"
                     ),
                 ),
-                ("is_seen", models.BooleanField(default=False, verbose_name="visualizada")),
+                (
+                    "is_seen",
+                    models.BooleanField(
+                        default=False, verbose_name="visualizada"
+                    ),
+                ),
             ],
             options={
                 "verbose_name": "Conquista do Aluno",
