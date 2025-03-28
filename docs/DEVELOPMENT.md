@@ -254,3 +254,80 @@ Isso é útil quando:
 - Node.js LTS
 - PostgreSQL
 - VS Code com extensões recomendadas 
+
+## Implementações Realizadas
+
+Este documento registra as principais implementações, mudanças e decisões de design do projeto.
+
+### Configuração do Ambiente
+
+- Criação do ambiente virtual e instalação das dependências (`2184dda`)
+- Configuração inicial do projeto Django (`f6e2c45`)
+
+### Modelagem de Dados
+
+- Criação dos modelos principais: User, Course, Module, Lesson (`3b71f82`)
+- Implementação das relações entre modelos e validações (`5e9ad91`)
+
+### Commits Realizados
+
+- Configuração inicial do projeto Django (`f6e2c45`)
+- Implementação do modelo de usuário customizado (`3b71f82`)
+- Criação dos modelos de cursos e aulas (`5e9ad91`)
+- Implementação do sistema de permissões (`7d4ef08`)
+- Criação do app de progresso dos alunos (`b6932c1`) 
+- Adição de documentação técnica inicial (`d49a760`)
+- Criação de migrações iniciais (`1a8ef2b`)
+- Implementação do admin para gerenciamento de dados (`a3c6f09`)
+- Implementação dos modelos de quiz e questões (`e5f7ab3`)
+- Configuração do ambiente de desenvolvimento (`9c81d5e`)
+- Implementação dos modelos de agendamento de aulas (`c4a7f2e`)
+- Adição de apps users, courses, scheduling, quizzes, progress (`b6f9d1f`)
+- Modificação da ordem de migração para usar migração de app de usuário primeiro (`1b8d10d`)
+- Adição da configuração de conexão com Supabase (`6ffc12e`)
+- Resolução do conflito de nome db_table no UserProfile (`5a23f4b`)
+- Adição de script para gerar schema SQL para Supabase (`3c8091e`)
+- Resolução de problemas linter em settings.py (`abe1dd5`)
+- Otimização de acesso a ForeignKey e correção de validação de tipo em modelos (`aa5ead9`)
+- Refatoração dos modelos para otimização com Supabase (`090972a`)
+
+### Geração de Schema para Supabase
+
+Foi implementado um script para gerar automaticamente um schema SQL compatível com o Supabase a partir dos modelos Django:
+
+```bash
+python backend/generate_supabase_schema.py
+```
+
+Este script gera um arquivo `supabase_schema.sql` que pode ser importado no Supabase para criar todas as tabelas necessárias, incluindo:
+
+1. Definição de tipos de dados apropriados para PostgreSQL
+2. Criação de UUIDs para chaves primárias
+3. Configuração de chaves estrangeiras e relacionamentos 
+4. Criação de índices para otimizar consultas
+
+### Otimização de Modelos para Supabase
+
+Na refatoração dos modelos (`090972a`), foram implementadas várias otimizações e melhorias:
+
+1. **Implementação de Modelo Base**:
+   - Criação da classe `SupabaseBaseModel` com campos comuns para todos os modelos
+   - Uso de UUIDs para chaves primárias, compatíveis com Supabase
+   - Gerenciamento automático de timestamps de criação e atualização
+
+2. **Otimização de Acesso a Objetos Relacionados**:
+   - Implementação da classe `RelatedObjectCache` para minimizar consultas ao banco
+   - Funções utilitárias para acesso seguro a atributos de objetos relacionados
+   - Tratamento robusto de exceções nas referências entre modelos
+
+3. **Conversão de Campos de Mídia**:
+   - Alteração de `ImageField` para `URLField` para compatibilidade com buckets do Supabase
+   - Aumento do tamanho máximo das URLs para acomodar URLs do Storage do Supabase
+
+4. **Melhoria na Definição de Índices**:
+   - Adição de índices específicos para campos de busca frequente
+   - Definição explícita de nomes de tabelas via `db_table` para controle no PostgreSQL
+   
+5. **Tipagem Segura**:
+   - Adição de tipagem Python em métodos e propriedades
+   - Uso do módulo `typing` para definir tipos genéricos e retornos de métodos 
