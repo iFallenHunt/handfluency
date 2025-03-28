@@ -147,7 +147,7 @@ class Module(SupabaseBaseModel):
         course_title = safe_get_related_str_field(
             course, 
             "title", 
-            f"Curso {self.course_id}"
+            f"Curso {getattr(self.course, 'pk', '')}"
         )
         return f"{course_title} - {self.title}"
 
@@ -228,7 +228,7 @@ class Lesson(SupabaseBaseModel):
         module_title = safe_get_related_str_field(
             module, 
             "title", 
-            f"Módulo {self.module_id}"
+            f"Módulo {getattr(self.module, 'pk', '')}"
         )
         
         # Acessar o curso através do módulo, usando cache do módulo
@@ -333,15 +333,15 @@ class Enrollment(SupabaseBaseModel):
             student_name = get_display_name(
                 student, 
                 "username", 
-                f"Aluno {self.student_id}"
+                f"Aluno {getattr(self.student, 'pk', '')}"
             )
         else:
-            student_name = f"Aluno {self.student_id}"
+            student_name = f"Aluno {getattr(self.student, 'pk', '')}"
         
         course_title = safe_get_related_str_field(
             course, 
             "title", 
-            f"Curso {self.course_id}"
+            f"Curso {getattr(self.course, 'pk', '')}"
         )
         
         return f"{student_name} - {course_title}"
@@ -391,7 +391,7 @@ class CourseRating(SupabaseBaseModel):
         db_table = "course_ratings"
 
     def __str__(self) -> str:
-        """Representação em string formatada como 'Curso - Avaliação - Aluno'."""
+        """Representação em string da avaliação de curso."""
         student = self._student_cache.get(self, "student")
         course = self._course_cache.get(self, "course")
         
@@ -400,15 +400,15 @@ class CourseRating(SupabaseBaseModel):
             student_name = get_display_name(
                 student, 
                 "username", 
-                f"Aluno {self.student_id}"
+                f"Aluno {getattr(self.student, 'pk', '')}"
             )
         else:
-            student_name = f"Aluno {self.student_id}"
+            student_name = f"Aluno {getattr(self.student, 'pk', '')}"
         
         course_title = safe_get_related_str_field(
             course, 
             "title", 
-            f"Curso {self.course_id}"
+            f"Curso {getattr(self.course, 'pk', '')}"
         )
         
         return f"{course_title} - {self.rating}/5 - {student_name}"
