@@ -1,3 +1,6 @@
+"""
+Configuração de admin para o app de quizzes.
+"""
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
@@ -5,154 +8,123 @@ from .models import Quiz, Question, Answer, QuizAttempt, QuestionResponse
 
 
 class AnswerInline(admin.TabularInline):
+    """Inline para respostas de uma questão."""
     model = Answer
     extra = 3
-    fields = ("text", "is_correct", "order", "explanation")
-
-
-class QuestionInline(admin.TabularInline):
-    model = Question
-    extra = 1
-    fields = ("text", "question_type", "order", "points")
-    show_change_link = True
-
-
-class QuestionResponseInline(admin.TabularInline):
-    model = QuestionResponse
-    extra = 0
-    fields = ("question", "is_correct", "points_earned")
-    readonly_fields = ("question", "is_correct", "points_earned")
-    can_delete = False
-
-
-@admin.register(Quiz)
-class QuizAdmin(admin.ModelAdmin):
-    list_display = (
-        "title",
-        "course",
-        "lesson",
-        "is_active",
-        "total_questions",
-        "passing_score",
-        "created_by",
-        "created_at",
-    )
-    list_filter = ("is_active", "course", "created_at")
-    search_fields = ("title", "description", "course__title")
-    inlines = [QuestionInline]
-    fieldsets = (
-        (None, {"fields": ("title", "description", "course", "lesson")}),
-        (
-            _("Configurações"),
-            {"fields": ("is_active", "time_limit", "passing_score", "created_by")},
-        ),
-    )
+    fields = ['text', 'is_correct', 'order', 'explanation']
 
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ("text_preview", "quiz", "question_type", "order", "points")
-    list_filter = ("quiz__course", "quiz", "question_type")
-    search_fields = ("text", "quiz__title")
+    """Admin para gerenciamento de questões."""
+    list_display = ['id', 'quiz', 'question_type', 'order', 'points']
+    list_filter = ['quiz', 'question_type']
+    search_fields = ['text', 'quiz__title']
     inlines = [AnswerInline]
     fieldsets = (
-        (None, {"fields": ("quiz", "text", "question_type", "order", "points")}),
-        (_("Mídia"), {"fields": ("image", "video_url"), "classes": ("collapse",)}),
+        (None, {
+            'fields': ('quiz', 'text', 'question_type', 'order', 'points')
+        }),
+        (_('Mídia'), {
+            'fields': ('image', 'video_url'),
+            'classes': ('collapse',),
+        }),
     )
 
-    def text_preview(self, obj):
-        """Exibe uma prévia do texto da questão."""
-        max_length = 50
-        if len(obj.text) > max_length:
-            return f"{obj.text[:max_length]}..."
-        return obj.text
 
-    text_preview.short_description = _("Questão")
+class QuestionInline(admin.TabularInline):
+    """Inline para questões de um quiz."""
+    model = Question
+    extra = 0
+    fields = ['text', 'question_type', 'order', 'points']
+    show_change_link = True
 
 
-@admin.register(Answer)
-class AnswerAdmin(admin.ModelAdmin):
-    list_display = ("text_preview", "question", "is_correct", "order")
-    list_filter = ("is_correct", "question__quiz")
-    search_fields = ("text", "question__text", "question__quiz__title")
+@admin.register(Quiz)
+class QuizAdmin(admin.ModelAdmin):
+    """Admin para gerenciamento de quizzes."""
+    list_display = [
+        'id', 'title', 'course', 'lesson', 'is_active', 
+        'passing_score', 'time_limit', 'total_questions'
+    ]
+    list_filter = ['is_active', 'course', 'created_at']
+    search_fields = ['title', 'description', 'course__title']
+    inlines = [QuestionInline]
     fieldsets = (
-        (None, {"fields": ("question", "text", "is_correct", "order")}),
-        (_("Explicação"), {"fields": ("explanation",), "classes": ("collapse",)}),
+        (None, {
+            'fields': ('title', 'description')
+        }),
+        (_('Relacionamentos'), {
+            'fields': ('course', 'lesson', 'created_by')
+        }),
+        (_('Configurações'), {
+            'fields': ('is_active', 'time_limit', 'passing_score')
+        }),
     )
 
-    def text_preview(self, obj):
-        """Exibe uma prévia do texto da resposta."""
-        max_length = 50
-        if len(obj.text) > max_length:
-            return f"{obj.text[:max_length]}..."
-        return obj.text
 
-    text_preview.short_description = _("Resposta")
+class QuestionResponseInline(admin.TabularInline):
+    """Inline para respostas de um aluno em um quiz."""
+    model = QuestionResponse
+    extra = 0
+    fields = ['question', 'is_correct', 'text_response', 'response_time']
+    readonly_fields = ['is_correct', 'response_time']
+    show_change_link = True
 
 
 @admin.register(QuizAttempt)
 class QuizAttemptAdmin(admin.ModelAdmin):
-    list_display = (
-        "student",
-        "quiz",
-        "status",
-        "score",
-        "score_percentage",
-        "started_at",
-        "completed_at",
-        "passed",
-    )
-    list_filter = ("status", "quiz__course", "quiz")
-    search_fields = (
-        "student__username",
-        "student__first_name",
-        "student__last_name",
-        "quiz__title",
-    )
-    readonly_fields = ("started_at",)
+    """Admin para gerenciamento de tentativas de quiz."""
+    list_display = [
+        'id', 'student', 'quiz', 'status', 'score', 
+        'score_percentage', 'passed', 'created_at'
+    ]
+    list_filter = ['status', 'quiz', 'created_at']
+    search_fields = [
+        'student__username', 'student__email', 
+        'quiz__title', 'quiz__course__title'
+    ]
     inlines = [QuestionResponseInline]
+    readonly_fields = ['score', 'score_percentage', 'passed']
     fieldsets = (
-        (None, {"fields": ("student", "quiz", "status")}),
-        (_("Pontuação"), {"fields": ("score", "score_percentage")}),
-        (_("Tempo"), {"fields": ("started_at", "completed_at")}),
+        (None, {
+            'fields': ('student', 'quiz', 'status')
+        }),
+        (_('Pontuação'), {
+            'fields': ('score', 'score_percentage', 'passed')
+        }),
+        (_('Controle de Tempo'), {
+            'fields': ('created_at', 'completed_at')
+        }),
+        (_('Informações Adicionais'), {
+            'fields': ('ip_address',),
+            'classes': ('collapse',),
+        }),
     )
 
 
 @admin.register(QuestionResponse)
 class QuestionResponseAdmin(admin.ModelAdmin):
-    list_display = (
-        "attempt_info",
-        "question_info",
-        "is_correct",
-        "points_earned",
-        "created_at",
-    )
-    list_filter = ("is_correct", "attempt__quiz", "question__question_type")
-    search_fields = (
-        "attempt__student__username",
-        "attempt__student__first_name",
-        "attempt__quiz__title",
-        "question__text",
-    )
-    filter_horizontal = ("selected_answers",)
-    readonly_fields = ("created_at",)
+    """Admin para gerenciamento de respostas a questões."""
+    list_display = [
+        'id', 'attempt', 'question', 'is_correct', 
+        'response_time', 'created_at'
+    ]
+    list_filter = ['is_correct', 'question__question_type', 'created_at']
+    search_fields = [
+        'attempt__student__username', 'attempt__student__email',
+        'question__text', 'text_response'
+    ]
+    filter_horizontal = ['selected_answers']
+    readonly_fields = ['is_correct']
     fieldsets = (
-        (None, {"fields": ("attempt", "question")}),
-        (
-            _("Resposta"),
-            {"fields": ("selected_answers", "text_response", "video_response_url")},
-        ),
-        (_("Avaliação"), {"fields": ("is_correct", "points_earned", "created_at")}),
+        (None, {
+            'fields': ('attempt', 'question', 'is_correct')
+        }),
+        (_('Respostas'), {
+            'fields': ('selected_answers', 'text_response', 'video_response_url')
+        }),
+        (_('Metadados'), {
+            'fields': ('response_time', 'created_at')
+        }),
     )
-
-    def attempt_info(self, obj):
-        """Exibe informações resumidas sobre a tentativa."""
-        return f"{obj.attempt.student.get_full_name()} - {obj.attempt.quiz.title}"
-
-    attempt_info.short_description = _("Tentativa")
-
-    def question_info(self, obj):
-        """Exibe informações resumidas sobre a questão."""
-        return f"Q{obj.question.order}: {obj.question.text[:30]}..."
-
-    question_info.short_description = _("Questão")
