@@ -207,6 +207,12 @@ Este documento mantém o registro do progresso de desenvolvimento e os próximos
    - `feat: setup swagger/openapi documentation`
    - `feat: implement data models for all apps`
    - `fix: resolve database migration issues`
+   - `feat: add users, courses, scheduling, quizzes, progress apps` (`b6f9d1f`)
+   - `fix: modify migration order so that apps use user's app migration first` (`1b8d10d`)
+   - `feat: add Supabase connection configuration` (`6ffc12e`)
+   - `fix: resolve UserProfile db_table name conflict` (`5a23f4b`)
+   - `feat: add script to generate SQL schema for Supabase` (`3c8091e`)
+   - `fix: resolve linter issues in settings.py` (`abe1dd5`)
 
 3. Frontend:
    - `feat: initialize next.js project with typescript and tailwind`
@@ -214,6 +220,26 @@ Este documento mantém o registro do progresso de desenvolvimento e os próximos
    - `chore: add frontend configuration files`
    - `feat: add initial public assets`
    - `chore: add frontend environment variables template`
+
+## Geração de Schema para Supabase
+
+O projeto inclui um script para gerar um schema SQL compatível com o Supabase:
+
+```bash
+cd backend
+python3 generate_supabase_schema.py
+```
+
+Este script irá criar um arquivo `supabase_schema.sql` que contém:
+- Definições de tabelas para todos os modelos
+- Relacionamentos de chave estrangeira
+- Índices
+- Triggers para campos de timestamp (created_at/updated_at)
+
+Isso é útil quando:
+- Configurando uma nova instância do Supabase
+- Sincronizando seus modelos Django com o Supabase
+- Verificando a compatibilidade da estrutura do banco de dados
 
 ## Notas de Desenvolvimento
 
