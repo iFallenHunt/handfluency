@@ -213,6 +213,9 @@ Este documento mantém o registro do progresso de desenvolvimento e os próximos
    - `fix: resolve UserProfile db_table name conflict` (`5a23f4b`)
    - `feat: add script to generate SQL schema for Supabase` (`3c8091e`)
    - `fix: resolve linter issues in settings.py` (`abe1dd5`)
+   - `refactor: otimizar modelos para uso com Supabase` (`a7d83b7`)
+   - `fix: corrigir acesso a atributos de ForeignKey nos modelos` (`69be012`)
+   - `feat: implement optimized Quiz models for Supabase` (`6a4fda2`)
 
 3. Frontend:
    - `feat: initialize next.js project with typescript and tailwind`
@@ -290,6 +293,7 @@ Este documento registra as principais implementações, mudanças e decisões de
 - Resolução de problemas linter em settings.py (`abe1dd5`)
 - Otimização de acesso a ForeignKey e correção de validação de tipo em modelos (`aa5ead9`)
 - Refatoração dos modelos para otimização com Supabase (`090972a`)
+- Implementação de modelos otimizados para Quizzes (`6a4fda2`)
 
 ### Geração de Schema para Supabase
 
@@ -331,3 +335,44 @@ Na refatoração dos modelos (`090972a`), foram implementadas várias otimizaç�
 5. **Tipagem Segura**:
    - Adição de tipagem Python em métodos e propriedades
    - Uso do módulo `typing` para definir tipos genéricos e retornos de métodos 
+
+## Otimizações para Modelos no Supabase
+
+### Implementação Base
+- Criação da classe `SupabaseBaseModel` que estende `models.Model` com campos comuns
+- Implementação do sistema de cache para objetos relacionados usando `RelatedObjectCache`
+- Conversão de campos `ImageField` para `URLField` para integração com storage do Supabase
+- Melhoria nos índices para consultas mais eficientes
+- Manipulação robusta de exceções ao acessar objetos relacionados
+- Tipagem estrita em Python usando o módulo `typing`
+
+### Modelos Otimizados
+
+#### Usuários
+Modelos no app `users` foram refatorados para:
+- Usar o modelo base do Supabase
+- Implementar cache de objetos relacionados
+- Definir índices otimizados para consultas frequentes
+
+#### Cursos
+Modelos no app `courses` foram refatorados para:
+- Usar o modelo base do Supabase
+- Implementar cache para consulta eficiente de objetos relacionados
+- Tratamento seguro de acesso a Foreign Keys
+- Índices personalizados para ordenação e filtragem
+
+#### Quizzes
+Modelos no app `quizzes` foram implementados com:
+- Estrutura base do Supabase com cache de objetos relacionados
+- Métodos de conveniência para cálculo de pontuação e verificação de respostas
+- Armazenamento otimizado para mídia usando URLs
+- Índices estratégicos para consultas frequentes
+- Tratamento seguro de acesso a objetos relacionados
+- Campos específicos para rastreamento de tentativas e respostas
+
+Os modelos implementados incluem:
+- Quiz - Para avaliações com configurações como tempo limite e nota mínima
+- Question - Para perguntas com diversos tipos (múltipla escolha, V/F, etc.)
+- Answer - Para opções de resposta com indicação de corretude
+- QuizAttempt - Para registrar tentativas dos alunos
+- QuestionResponse - Para registrar as respostas específicas 
