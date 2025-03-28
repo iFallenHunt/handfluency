@@ -122,7 +122,10 @@ class QuestionResponseAdmin(admin.ModelAdmin):
             'fields': ('attempt', 'question', 'is_correct')
         }),
         (_('Respostas'), {
-            'fields': ('selected_answers', 'text_response', 'video_response_url')
+            'fields': (
+                'selected_answers', 'text_response', 
+                'video_response_url'
+            )
         }),
         (_('Metadados'), {
             'fields': ('response_time', 'created_at')

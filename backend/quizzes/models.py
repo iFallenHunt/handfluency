@@ -477,7 +477,8 @@ class QuestionResponse(SupabaseBaseModel):
         
         student_name = ""
         if attempt and hasattr(attempt.student, 'get_full_name'):
-            student_name = attempt.student.get_full_name() or str(attempt.student)
+            student_name = (attempt.student.get_full_name() or 
+                           str(attempt.student))
         else:
             student_name = "Aluno"
             
