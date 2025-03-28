@@ -49,31 +49,31 @@ Este documento mantém o registro do progresso de desenvolvimento e os próximos
 - [x] Configurar Swagger/OpenAPI
 
 ### Modelos de Dados
-- [ ] Users
-  - [ ] Modelo de usuário customizado
-  - [ ] Perfis (Aluno/Professor)
-  - [ ] Autenticação social (Google)
+- [x] Users
+  - [x] Modelo de usuário customizado
+  - [x] Perfis (Aluno/Professor)
+  - [x] Autenticação social (Google)
   
-- [ ] Courses
-  - [ ] Modelo de Curso
-  - [ ] Modelo de Módulo
-  - [ ] Modelo de Aula
-  - [ ] Sistema de progresso
+- [x] Courses
+  - [x] Modelo de Curso
+  - [x] Modelo de Módulo
+  - [x] Modelo de Aula
+  - [x] Sistema de progresso
   
-- [ ] Scheduling
-  - [ ] Modelo de Agendamento
-  - [ ] Disponibilidade de professores
-  - [ ] Sistema de notificações
+- [x] Scheduling
+  - [x] Modelo de Agendamento
+  - [x] Disponibilidade de professores
+  - [x] Sistema de notificações
   
-- [ ] Quizzes
-  - [ ] Modelo de Quiz
-  - [ ] Modelo de Questão
-  - [ ] Sistema de pontuação
+- [x] Quizzes
+  - [x] Modelo de Quiz
+  - [x] Modelo de Questão
+  - [x] Sistema de pontuação
   
-- [ ] Progress
-  - [ ] Tracking de progresso do aluno
-  - [ ] Relatórios de desempenho
-  - [ ] Gamificação
+- [x] Progress
+  - [x] Tracking de progresso do aluno
+  - [x] Relatórios de desempenho
+  - [x] Gamificação
 
 ### APIs
 - [ ] Endpoints de Autenticação
@@ -205,6 +205,7 @@ Este documento mantém o registro do progresso de desenvolvimento e os próximos
    - `feat: add jwt authentication configuration`
    - `feat: enhance cors configuration and security headers`
    - `feat: setup swagger/openapi documentation`
+   - `feat: implement data models for all apps`
 
 3. Frontend:
    - `feat: initialize next.js project with typescript and tailwind`
@@ -226,3 +227,11 @@ Este documento mantém o registro do progresso de desenvolvimento e os próximos
 - Node.js LTS
 - PostgreSQL
 - VS Code com extensões recomendadas 
+
+### Problemas Conhecidos
+1. Problema de migração do banco de dados
+   - Erro: "Migration admin.0001_initial is applied before its dependency users.0001_initial on database 'default'"
+   - Causa: O banco de dados já possui migração admin aplicada, mas ainda não tem a migração users
+   - Possíveis soluções:
+     - Fazer backup do banco e resetar, executando migrate novamente
+     - Marcar manualmente as migrações como aplicadas para resolver a dependência 

@@ -248,3 +248,10 @@ SWAGGER_SETTINGS = {
         }
     }
 }
+
+# Usuário personalizado
+AUTH_USER_MODEL = 'users.User'
+
+# Configurações para armazenamento de arquivos de mídia
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
