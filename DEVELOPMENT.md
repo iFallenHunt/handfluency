@@ -19,6 +19,7 @@
 - Added Supabase connection configuration (`6ffc12e`) 
 - Fixed UserProfile db_table name conflict (`5a23f4b`)
 - Added script to generate SQL schema for Supabase (`3c8091e`)
+- Fixed linter issues in settings.py (`abe1dd5`)
 
 ### Supabase Schema Generation
 
