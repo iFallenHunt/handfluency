@@ -1,10 +1,21 @@
+"""
+Modelos para o app courses, definindo estruturas de dados para cursos e aulas.
+Otimizado para uso com Supabase como banco de dados.
+"""
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
-from typing import Optional, cast
+from typing import Optional
+
+from core.base_models import (
+    SupabaseBaseModel, 
+    RelatedObjectCache,
+    safe_get_related_str_field,
+    get_display_name
+)
 
 
-class Course(models.Model):
+class Course(SupabaseBaseModel):
     """
     Modelo representando um curso de Libras.
     """
@@ -19,17 +30,32 @@ class Course(models.Model):
     slug = models.SlugField(_("slug"), max_length=255, unique=True)
     description = models.TextField(_("descrição"))
     level = models.CharField(
-        _("nível"), max_length=20, choices=LEVEL_CHOICES, default="basic"
+        _("nível"), 
+        max_length=20, 
+        choices=LEVEL_CHOICES, 
+        default="basic"
     )
-    cover_image = models.ImageField(
-        _("imagem de capa"), upload_to="course_covers/", blank=True, null=True
+    
+    # Mídia do curso
+    cover_image = models.URLField(
+        _("URL da imagem de capa"), 
+        blank=True,
+        max_length=500,
+        help_text=_("URL para imagem de capa no bucket do Supabase")
     )
-    preview_video = models.URLField(_("vídeo de prévia"), blank=True)
+    preview_video = models.URLField(
+        _("URL do vídeo de prévia"), 
+        blank=True,
+        max_length=500
+    )
 
     # Metadados
     is_active = models.BooleanField(_("ativo"), default=True)
-    created_at = models.DateTimeField(_("criado em"), auto_now_add=True)
-    updated_at = models.DateTimeField(_("atualizado em"), auto_now=True)
+    is_featured = models.BooleanField(
+        _("destacado"), 
+        default=False,
+        help_text=_("Destaca o curso na página inicial")
+    )
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -43,19 +69,39 @@ class Course(models.Model):
         default=0
     )
     average_rating = models.DecimalField(
-        _("avaliação média"), max_digits=3, decimal_places=2, default=0.0
+        _("avaliação média"), 
+        max_digits=3, 
+        decimal_places=2, 
+        default=0.0
     )
+    
+    # Cache de objetos relacionados
+    _created_by_cache: Optional[RelatedObjectCache] = None
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._created_by_cache = RelatedObjectCache(models.Model)
 
     def __str__(self) -> str:
+        """Representação em string do curso."""
         return str(self.title)
+        
+    def get_absolute_url(self) -> str:
+        """URL amigável para o curso."""
+        return f"/cursos/{self.slug}/"
 
     class Meta:
         verbose_name = _("Curso")
         verbose_name_plural = _("Cursos")
         ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["slug"], name="idx_course_slug"),
+            models.Index(fields=["is_active"], name="idx_course_active")
+        ]
+        db_table = "courses"
 
 
-class Module(models.Model):
+class Module(SupabaseBaseModel):
     """
     Modelo representando um módulo dentro de um curso.
     """
@@ -72,33 +118,41 @@ class Module(models.Model):
 
     # Metadados
     is_active = models.BooleanField(_("ativo"), default=True)
-    created_at = models.DateTimeField(_("criado em"), auto_now_add=True)
-    updated_at = models.DateTimeField(_("atualizado em"), auto_now=True)
-
-    # Cache para objetos relacionados
-    _course_cache: Optional[Course] = None
+    duration_minutes = models.PositiveIntegerField(
+        _("duração em minutos"),
+        default=0,
+        help_text=_("Duração estimada do módulo em minutos")
+    )
+    
+    # Cache de objetos relacionados
+    _course_cache: Optional[RelatedObjectCache[Course]] = None
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._course_cache = RelatedObjectCache(Course)
 
     class Meta:
         verbose_name = _("Módulo")
         verbose_name_plural = _("Módulos")
         ordering = ["course", "order"]
         unique_together = [["course", "order"]]
+        indexes = [
+            models.Index(fields=["course", "order"], name="idx_module_order")
+        ]
+        db_table = "modules"
 
     def __str__(self) -> str:
         """Representação em string formatada como 'Curso - Módulo'."""
-        course_title = ""
-        try:
-            # Acessar o objeto course diretamente
-            course_obj = cast(Course, self.course)
-            course_title = course_obj.title
-            # Armazenar em cache para uso futuro
-            self._course_cache = course_obj
-        except Exception:
-            course_title = f"Curso {self.course_id}"
+        course = self._course_cache.get(self, "course")
+        course_title = safe_get_related_str_field(
+            course, 
+            "title", 
+            f"Curso {self.course_id}"
+        )
         return f"{course_title} - {self.title}"
 
 
-class Lesson(models.Model):
+class Lesson(SupabaseBaseModel):
     """
     Modelo representando uma aula dentro de um módulo.
     """
@@ -111,9 +165,14 @@ class Lesson(models.Model):
     )
     title = models.CharField(_("título"), max_length=200)
     description = models.TextField(_("descrição"))
-    video_url = models.URLField(_("URL do vídeo"))
+    video_url = models.URLField(
+        _("URL do vídeo"),
+        max_length=500,
+        help_text=_("URL do vídeo da aula")
+    )
     duration = models.PositiveIntegerField(
-        _("duração em minutos"), help_text=_("Duração da aula em minutos")
+        _("duração em minutos"), 
+        help_text=_("Duração da aula em minutos")
     )
     order = models.PositiveIntegerField(_("ordem"))
 
@@ -124,8 +183,6 @@ class Lesson(models.Model):
         help_text=_("Se esta aula está disponível gratuitamente"),
     )
     is_active = models.BooleanField(_("ativa"), default=True)
-    created_at = models.DateTimeField(_("criada em"), auto_now_add=True)
-    updated_at = models.DateTimeField(_("atualizada em"), auto_now=True)
 
     # Material complementar
     supplementary_material = models.TextField(
@@ -133,51 +190,79 @@ class Lesson(models.Model):
         blank=True,
         help_text=_("Material adicional para a aula (links, texto, etc)"),
     )
+    
+    # Recursos adicionais
+    attachments = models.JSONField(
+        _("anexos"),
+        default=list,
+        blank=True,
+        help_text=_("Lista de anexos em formato JSON com URLs para recursos")
+    )
 
-    # Cache para objetos relacionados
-    _module_cache: Optional[Module] = None
+    # Cache de objetos relacionados
+    _module_cache: Optional[RelatedObjectCache[Module]] = None
+    _course: Optional[Course] = None
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._module_cache = RelatedObjectCache(Module)
 
     class Meta:
         verbose_name = _("Aula")
         verbose_name_plural = _("Aulas")
         ordering = ["module", "order"]
         unique_together = [["module", "order"]]
+        indexes = [
+            models.Index(fields=["module", "order"], name="idx_lesson_order"),
+            models.Index(fields=["is_free"], name="idx_lesson_free")
+        ]
+        db_table = "lessons"
 
     def __str__(self) -> str:
         """Representação em string formatada como 'Curso - Módulo - Aula'."""
-        module_title = ""
+        module = self._module_cache.get(self, "module")
+        
+        if not module:
+            return f"Aula {self.order}: {self.title}"
+            
+        module_title = safe_get_related_str_field(
+            module, 
+            "title", 
+            f"Módulo {self.module_id}"
+        )
+        
+        # Acessar o curso através do módulo, usando cache do módulo
         course_title = ""
         try:
-            # Acessar o objeto module diretamente
-            module_obj = cast(Module, self.module)
-            module_title = module_obj.title
-            
-            # Tentar acessar o curso através do módulo
-            course_obj = cast(Course, module_obj.course)
-            course_title = course_obj.title
-            
-            # Armazenar em cache para uso futuro
-            self._module_cache = module_obj
-            module_obj._course_cache = course_obj
+            course = self.course
+            if course:
+                course_title = course.title
+            else:
+                course_title = "Curso"
         except Exception:
-            module_title = f"Módulo {self.module_id}"
             course_title = "Curso"
-
+            
         return f"{course_title} - {module_title} - {self.title}"
 
     @property
     def course(self) -> Optional[Course]:
         """Retorna o curso a qual esta aula pertence."""
+        if self._course:
+            return self._course
+            
         try:
-            # Acessar o objeto module diretamente
-            module_obj = cast(Module, self.module)
-            # Acessar o curso através do módulo
-            return cast(Course, module_obj.course)
+            module = self._module_cache.get(self, "module")
+            if not module:
+                return None
+                
+            course = module._course_cache.get(module, "course")
+            self._course = course
+            return course
         except Exception:
             return None
 
 
-class Enrollment(models.Model):
+class Enrollment(SupabaseBaseModel):
     """
     Modelo representando a matrícula de um aluno em um curso.
     """
@@ -194,7 +279,8 @@ class Enrollment(models.Model):
         related_name="enrollments",
         verbose_name=_("curso"),
     )
-    enrolled_at = models.DateTimeField(_("matriculado em"), auto_now_add=True)
+    
+    # Status da matrícula
     is_active = models.BooleanField(_("ativo"), default=True)
     completed = models.BooleanField(_("completo"), default=False)
 
@@ -208,37 +294,60 @@ class Enrollment(models.Model):
         _("porcentagem de progresso"), 
         default=0
     )
+    
+    # Informações adicionais
+    completed_at = models.DateTimeField(
+        _("completado em"),
+        null=True,
+        blank=True,
+        help_text=_("Data em que o aluno completou o curso")
+    )
+    
+    # Cache de objetos relacionados
+    _student_cache: Optional[RelatedObjectCache] = None
+    _course_cache: Optional[RelatedObjectCache[Course]] = None
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._student_cache = RelatedObjectCache(models.Model)
+        self._course_cache = RelatedObjectCache(Course)
 
     class Meta:
         verbose_name = _("Matrícula")
         verbose_name_plural = _("Matrículas")
         unique_together = [["student", "course"]]
+        indexes = [
+            models.Index(fields=["student"], name="idx_enrollment_student"),
+            models.Index(fields=["course"], name="idx_enrollment_course"),
+            models.Index(fields=["is_active"], name="idx_enrollment_active")
+        ]
+        db_table = "enrollments"
 
     def __str__(self) -> str:
         """Representação em string formatada como 'Aluno - Curso'."""
-        student_username = ""
-        course_title = ""
-        try:
-            # Tentar acessar o username do aluno
-            user = self.student
-            if hasattr(user, 'username'):
-                student_username = user.username
-            else:
-                student_username = str(user)
-        except Exception:
-            student_username = f"Aluno {self.student_id}"
+        student = self._student_cache.get(self, "student")
+        course = self._course_cache.get(self, "course")
+        
+        student_name = ""
+        if student:
+            student_name = get_display_name(
+                student, 
+                "username", 
+                f"Aluno {self.student_id}"
+            )
+        else:
+            student_name = f"Aluno {self.student_id}"
+        
+        course_title = safe_get_related_str_field(
+            course, 
+            "title", 
+            f"Curso {self.course_id}"
+        )
+        
+        return f"{student_name} - {course_title}"
 
-        try:
-            # Tentar acessar o título do curso
-            course_obj = cast(Course, self.course)
-            course_title = course_obj.title
-        except Exception:
-            course_title = f"Curso {self.course_id}"
 
-        return f"{student_username} - {course_title}"
-
-
-class CourseRating(models.Model):
+class CourseRating(SupabaseBaseModel):
     """
     Modelo para avaliações de cursos pelos alunos.
     """
@@ -256,37 +365,50 @@ class CourseRating(models.Model):
         verbose_name=_("curso"),
     )
     rating = models.PositiveSmallIntegerField(
-        _("avaliação"), choices=[(i, str(i)) for i in range(1, 6)]
+        _("avaliação"), 
+        choices=[(i, str(i)) for i in range(1, 6)]
     )
     comment = models.TextField(_("comentário"), blank=True)
-    created_at = models.DateTimeField(_("criado em"), auto_now_add=True)
-    updated_at = models.DateTimeField(_("atualizado em"), auto_now=True)
+    
+    # Cache de objetos relacionados
+    _student_cache: Optional[RelatedObjectCache] = None
+    _course_cache: Optional[RelatedObjectCache[Course]] = None
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._student_cache = RelatedObjectCache(models.Model)
+        self._course_cache = RelatedObjectCache(Course)
 
     class Meta:
         verbose_name = _("Avaliação de curso")
         verbose_name_plural = _("Avaliações de cursos")
         unique_together = [["student", "course"]]
+        indexes = [
+            models.Index(fields=["student"], name="idx_rating_student"),
+            models.Index(fields=["course"], name="idx_rating_course"),
+            models.Index(fields=["rating"], name="idx_rating_value")
+        ]
+        db_table = "course_ratings"
 
     def __str__(self) -> str:
         """Representação em string formatada como 'Curso - Avaliação - Aluno'."""
-        student_username = ""
-        course_title = ""
-        try:
-            # Tentar acessar o username do aluno
-            user = self.student
-            if hasattr(user, 'username'):
-                student_username = user.username
-            else:
-                student_username = str(user)
-        except Exception:
-            student_username = f"Aluno {self.student_id}"
-
-        try:
-            # Tentar acessar o título do curso
-            course_obj = cast(Course, self.course)
-            course_title = course_obj.title
-        except Exception:
-            course_title = f"Curso {self.course_id}"
-
-        rating_text = f"{course_title} - {self.rating}/5"
-        return f"{rating_text} - {student_username}"
+        student = self._student_cache.get(self, "student")
+        course = self._course_cache.get(self, "course")
+        
+        student_name = ""
+        if student:
+            student_name = get_display_name(
+                student, 
+                "username", 
+                f"Aluno {self.student_id}"
+            )
+        else:
+            student_name = f"Aluno {self.student_id}"
+        
+        course_title = safe_get_related_str_field(
+            course, 
+            "title", 
+            f"Curso {self.course_id}"
+        )
+        
+        return f"{course_title} - {self.rating}/5 - {student_name}"

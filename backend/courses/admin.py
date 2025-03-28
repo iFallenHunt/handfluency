@@ -38,7 +38,13 @@ class CourseAdmin(admin.ModelAdmin):
         (_("Metadados"), {"fields": ("is_active", "created_by")}),
         (
             _("Estatísticas"),
-            {"fields": ("total_students", "average_rating"), "classes": ("collapse",)},
+            {
+                "fields": (
+                    "total_students",
+                    "average_rating",
+                ),
+                "classes": ("collapse",),
+            },
         ),
     )
 
@@ -53,9 +59,15 @@ class ModuleAdmin(admin.ModelAdmin):
 
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
-    list_display = ("title", "module", "order", "duration", "is_free", "is_active")
+    list_display = (
+        "title",
+        "module",
+        "order",
+        "duration",
+        "is_free",
+        "is_active",
+    )
     list_filter = ("module__course", "is_free", "is_active")
-    search_fields = ("title", "description", "module__title", "module__course__title")
     fieldsets = (
         (
             None,
@@ -83,14 +95,14 @@ class EnrollmentAdmin(admin.ModelAdmin):
     list_display = (
         "student",
         "course",
-        "enrolled_at",
+        "created_at",
         "is_active",
         "completed",
         "progress_percentage",
     )
-    list_filter = ("is_active", "completed", "enrolled_at")
+    list_filter = ("is_active", "completed", "created_at")
     search_fields = ("student__username", "student__email", "course__title")
-    readonly_fields = ("enrolled_at",)
+    readonly_fields = ("created_at", "updated_at")
 
 
 @admin.register(CourseRating)
