@@ -268,13 +268,13 @@ AUTH_USER_MODEL = "users.User"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-# Configurações para migrações personalizadas
-MIGRATION_MODULES = {
-    "auth": "migrations.auth",
-    "contenttypes": "migrations.contenttypes",
-    "sessions": "migrations.sessions",
-    # outros apps que precisam de controle especial
-}
+# Configurações para migrações personalizadas - comentado para resolver problemas
+# MIGRATION_MODULES = {
+#     "auth": "migrations.auth",
+#     "contenttypes": "migrations.contenttypes",
+#     "sessions": "migrations.sessions",
+#     # outros apps que precisam de controle especial
+# }
 
 # Configurações do Supabase
 SUPABASE_URL = config(
