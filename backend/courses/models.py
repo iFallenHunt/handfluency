@@ -37,7 +37,8 @@ class Course(models.Model):
     )
 
     # Estatísticas
-    total_students = models.PositiveIntegerField(_("total de alunos"), default=0)
+    total_students = models.PositiveIntegerField(
+        _("total de alunos"), default=0)
     average_rating = models.DecimalField(
         _("avaliação média"), max_digits=3, decimal_places=2, default=0.0
     )
@@ -78,7 +79,8 @@ class Module(models.Model):
         unique_together = [["course", "order"]]
 
     def __str__(self) -> str:
-        return f"{self.course.title} - {self.title}"
+        course = self.course
+        return f"{course.title} - {self.title}"
 
 
 class Lesson(models.Model):
@@ -124,7 +126,8 @@ class Lesson(models.Model):
         unique_together = [["module", "order"]]
 
     def __str__(self) -> str:
-        return f"{self.module.course.title} - {self.module.title} - {self.title}"
+        module = self.module
+        return f"{module.course.title} - {module.title} - {self.title}"
 
     @property
     def course(self):
@@ -164,7 +167,9 @@ class Enrollment(models.Model):
         unique_together = [["student", "course"]]
 
     def __str__(self) -> str:
-        return f"{self.student.username} - {self.course.title}"
+        student = self.student
+        course = self.course
+        return f"{student.username} - {course.title}"
 
 
 class CourseRating(models.Model):
@@ -197,4 +202,6 @@ class CourseRating(models.Model):
         unique_together = [["student", "course"]]
 
     def __str__(self) -> str:
-        return f"{self.course.title} - {self.rating}/5 - {self.student.username}"
+        student = self.student
+        course = self.course
+        return f"{course.title} - {self.rating}/5 - {student.username}"
